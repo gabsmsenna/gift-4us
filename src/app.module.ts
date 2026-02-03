@@ -3,8 +3,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CacheModule } from '@nestjs/cache-manager';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { redisStore } from 'cache-manager-redis-yet';
-
+import { UsersModule } from './modules/users/users.module';
+import { GroupsModule } from './modules/groups/groups.module';
+import { GiftsModule } from './modules/gifts/gifts.module';
+import { InvitesModule } from './modules/invites/invites.module';
+import { EventsModule } from './modules/events/events.module';
+import KeyvRedis from '@keyv/redis';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -30,15 +34,11 @@ import { redisStore } from 'cache-manager-redis-yet';
       isGlobal: true,
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        store: await redisStore({
-          socket: {
-            host: configService.get<string>('REDIS_HOST'),
-            port: configService.get<number>('REDIS_PORT'),
-          },
-          password: configService.get<string>('REDIS_PASS'),
-          ttl: 3600 * 1000,
-        }),
+      useFactory: async () => ({
+        stores: [
+          new KeyvRedis('redis://localhost:6379'),
+        ],
+        ttl: 2 * 60 * 60 * 1000,
       }),
     }),
 
@@ -59,6 +59,16 @@ import { redisStore } from 'cache-manager-redis-yet';
         }),
       },
     ]),
+
+    UsersModule,
+
+    GroupsModule,
+
+    GiftsModule,
+
+    InvitesModule,
+
+    EventsModule,
   ],
   controllers: [],
   providers: [],
