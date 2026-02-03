@@ -13,7 +13,7 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column({ select: false }) // Por segurança, não retorna a senha nas buscas padrão
+  @Column({ select: false })
   password: string;
 
   @Column({ type: 'timestamp' })
@@ -28,7 +28,6 @@ export class User {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
-  // Relacionamentos Inversos (para navegação no código)
   @OneToMany(() => Gift, (gift) => gift.user)
   gifts: Gift[];
 
