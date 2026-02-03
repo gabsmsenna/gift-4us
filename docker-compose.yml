@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: sgp_postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin_password
+      POSTGRES_DB: sistema_presentes
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - sgp_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: sgp_redis
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass "redis_password"
+    networks:
+      - sgp_network
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: sgp_rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    ports:
+      - "5672:5672"   # Porta para conexão da API
+      - "15672:15672" # Porta para o painel de gestão (UI)
+    networks:
+      - sgp_network
+
+volumes:
+  pg_data:
+
+networks:
+  sgp_network:
+    driver: bridge
