@@ -7,10 +7,11 @@ import {
   HttpStatus,
   Query,
   BadRequestException,
+  Param,
 } from '@nestjs/common';
 import { GroupsService } from './groups.service';
 import { CreateGroupDto } from './dtos/create-group.dto';
-import { GroupListDto } from './dtos/group-list.dto';
+import { GroupListDto, GroupMemberDto } from './dtos/group-list.dto';
 
 @Controller('groups')
 export class GroupsController {
@@ -34,5 +35,10 @@ export class GroupsController {
     } catch (error) {
       throw new BadRequestException((error as Error).message);
     }
+  }
+
+  @Get(':id')
+  async getMembersGroup(@Param('id') id: string): Promise<GroupMemberDto[] | null> {
+    return this.groupsService.getMembersGroup(id);
   }
 }

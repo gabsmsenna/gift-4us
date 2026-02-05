@@ -91,4 +91,24 @@ export class GroupsService {
         })) || [],
     }));
   }
+
+  async getMembersGroup(groupId: string) {
+    const group = await this.groupRepository
+      .createQueryBuilder('group')
+      .leftJoinAndSelect('group.members', 'members')
+      .leftJoinAndSelect('members.user', 'user')
+      .where('group.id = :groupId', { groupId })
+      .getOne();
+
+    if (!group) {
+      return null;
+    }
+
+    return group.members.map((member) => ({
+      id: member.user.id,
+      name: member.user.name,
+      email: member.user.email,
+      joinedAt: member.joinedAt,
+    }));
+  }
 }

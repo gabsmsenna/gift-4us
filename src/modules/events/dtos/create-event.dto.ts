@@ -2,7 +2,7 @@ import { IsString, IsDate, IsNotEmpty, IsUUID, IsArray } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { isValid, parse } from 'date-fns';
 
-export class    CreateEventDto {
+export class CreateEventDto {
   @IsNotEmpty({ message: 'O nome do evento é obrigatório' })
   @IsString()
   title: string;

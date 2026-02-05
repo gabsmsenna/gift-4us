@@ -25,7 +25,7 @@ export class EventsController {
     }
   }
 
-  @Get("user-events")
+  @Get('user-events')
   async findUserEvents(@Query('userId') userId: string) {
     if (!userId) {
       throw new BadRequestException('O parâmetro userId é obrigatório');
@@ -33,7 +33,7 @@ export class EventsController {
     return this.eventsService.findUserEvents(userId);
   }
 
-  @Get("group-events")
+  @Get('group-events')
   async findGroupsEvents(@Query('groupId') groupId: string) {
     if (!groupId) {
       throw new BadRequestException('O parâmetro groupId é obrigatório');

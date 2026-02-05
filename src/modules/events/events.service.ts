@@ -90,25 +90,25 @@ export class EventsService {
   }
 
   async findGroupEvents(groupId: string): Promise<EventListDto[]> {
-  const events = await this.userEventRepository
-    .createQueryBuilder('event')
-    .leftJoinAndSelect('event.user', 'user')
-    .leftJoinAndSelect('event.groups', 'groups')
-    .where('groups.id = :groupId', { groupId }) 
-    .getMany();
+    const events = await this.userEventRepository
+      .createQueryBuilder('event')
+      .leftJoinAndSelect('event.user', 'user')
+      .leftJoinAndSelect('event.groups', 'groups')
+      .where('groups.id = :groupId', { groupId })
+      .getMany();
 
-  return events.map((event) => ({
-    id: event.id,
-    title: event.title,
-    eventDate: event.eventDate,
-    userId: event.userId, // Ou event.user.id se não tiver a coluna mapeada direto
-    userName: event.user?.name || 'Desconhecido', // Tratamento de nulo
-    groups:
-      event.groups?.map((group) => ({
-        id: group.id,
-        name: group.name,
-        description: group.description,
-      })) || [],
-  }));
-}
+    return events.map((event) => ({
+      id: event.id,
+      title: event.title,
+      eventDate: event.eventDate,
+      userId: event.userId,
+      userName: event.user?.name || 'Desconhecido',
+      groups:
+        event.groups?.map((group) => ({
+          id: group.id,
+          name: group.name,
+          description: group.description,
+        })) || [],
+    }));
+  }
 }
