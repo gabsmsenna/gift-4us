@@ -46,9 +46,6 @@ export class Group {
   @OneToMany(() => GroupMember, (member) => member.group)
   members: GroupMember[];
 
-  @ManyToMany(() => Gift, (gift) => gift.groups)
-  gifts: Gift[];
-
   @ManyToMany(() => UserEvent, (event) => event.groups)
   events: UserEvent[];
 }

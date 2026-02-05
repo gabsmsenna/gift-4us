@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Group } from 'src/modules/groups/entities/group.entity';
+import { Gift } from 'src/modules/gifts/entities/gift.entity';
 
 @Entity('user_events')
 export class UserEvent {
@@ -31,4 +32,7 @@ export class UserEvent {
   @ManyToMany(() => Group, (group) => group.events)
   @JoinTable({ name: 'group_events' })
   groups: Group[];
+
+  @ManyToMany(() => Gift, (gift) => gift.events)
+  gifts: Gift[];
 }

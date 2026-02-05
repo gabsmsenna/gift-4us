@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Group } from 'src/modules/groups/entities/group.entity';
+import { UserEvent } from 'src/modules/events/entities/user-event.entity';
 
 @Entity('gifts')
 export class Gift {
@@ -19,14 +20,8 @@ export class Gift {
   @Column()
   title: string;
 
-  @Column({ type: 'text', nullable: true })
-  url: string;
-
-  @Column({ name: 'price_range', nullable: true })
-  priceRange: string;
-
-  @Column({ name: 'url', type: 'text', nullable: true })
-  imageUrl: string;
+  @Column('text', { array: true, nullable: true, default: '{}' })
+  urls: string[];
 
   @ManyToOne(() => User, (user) => user.gifts)
   @JoinColumn({ name: 'user_id' })
@@ -35,7 +30,17 @@ export class Gift {
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @ManyToMany(() => Group, (group) => group.gifts)
-  @JoinTable({ name: 'group_gifts' })
-  groups: Group[];
+  @ManyToMany(() => UserEvent, (event) => event.gifts)
+  @JoinTable({
+    name: 'event_gifts',
+    joinColumn: {
+      name: 'gift_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'event_id',
+      referencedColumnName: 'id',
+    },
+  })
+  events: UserEvent[];
 }
