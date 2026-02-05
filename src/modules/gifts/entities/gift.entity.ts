@@ -5,8 +5,11 @@ import {
   CreateDateColumn,
   ManyToOne,
   JoinColumn,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
+import { Group } from 'src/modules/groups/entities/group.entity';
 
 @Entity('gifts')
 export class Gift {
@@ -20,13 +23,10 @@ export class Gift {
   url: string;
 
   @Column({ name: 'price_range', nullable: true })
-  priceRange: string; // Ex: "R$ 50 - R$ 100"
+  priceRange: string;
 
-  @Column({ name: 'image_url', type: 'text', nullable: true })
+  @Column({ name: 'url', type: 'text', nullable: true })
   imageUrl: string;
-
-  @Column({ name: 'user_id' })
-  userId: string;
 
   @ManyToOne(() => User, (user) => user.gifts)
   @JoinColumn({ name: 'user_id' })
@@ -34,4 +34,8 @@ export class Gift {
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
+
+  @ManyToMany(() => Group, (group) => group.gifts)
+  @JoinTable({ name: 'group_gifts' })
+  groups: Group[];
 }

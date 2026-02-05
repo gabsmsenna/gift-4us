@@ -1,4 +1,11 @@
-import { IsString, IsDate, IsEnum, IsUUID, IsArray } from 'class-validator';
+import {
+  IsString,
+  IsDate,
+  IsEnum,
+  IsUUID,
+  IsArray,
+  IsOptional,
+} from 'class-validator';
 import { GroupStatus } from '../entities/group.entity';
 
 export class GroupMemberDto {
@@ -15,6 +22,24 @@ export class GroupMemberDto {
   joinedAt: Date;
 }
 
+export class UserEventDto {
+  @IsUUID()
+  id: string;
+
+  @IsString()
+  title: string;
+
+  @IsDate()
+  eventDate: Date;
+
+  @IsUUID()
+  userId: string;
+
+  @IsOptional()
+  @IsString()
+  userName?: string;
+}
+
 export class GroupListDto {
   @IsUUID()
   id: string;
@@ -28,9 +53,6 @@ export class GroupListDto {
   @IsEnum(GroupStatus)
   status: GroupStatus;
 
-  @IsDate()
-  eventDate: Date;
-
   @IsUUID()
   ownerId: string;
 
@@ -39,4 +61,8 @@ export class GroupListDto {
 
   @IsArray()
   members: GroupMemberDto[];
+
+  @IsOptional()
+  @IsArray()
+  userEvents?: UserEventDto[];
 }

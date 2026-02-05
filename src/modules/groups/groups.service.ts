@@ -51,7 +51,6 @@ export class GroupsService {
       name: savedGroup.name,
       description: savedGroup.description,
       status: savedGroup.status,
-      eventDate: savedGroup.eventDate,
       ownerId: savedGroup.ownerId,
       ownerName: ownerExists.name,
       createdAt: savedGroup.createdAt,
@@ -64,6 +63,8 @@ export class GroupsService {
       .leftJoinAndSelect('group.owner', 'owner')
       .leftJoinAndSelect('group.members', 'members')
       .leftJoinAndSelect('members.user', 'memberUser')
+      .leftJoinAndSelect('group.events', 'events')
+      .leftJoinAndSelect('events.user', 'eventUser')
       .where('members.user_id = :userId', { userId })
       .getMany();
 
@@ -72,7 +73,6 @@ export class GroupsService {
       name: group.name,
       description: group.description,
       status: group.status,
-      eventDate: group.eventDate,
       ownerId: group.ownerId,
       ownerName: group.owner?.name || '',
       members: group.members.map((member) => ({
@@ -81,6 +81,14 @@ export class GroupsService {
         email: member.user.email,
         joinedAt: member.joinedAt,
       })),
+      userEvents:
+        group.events?.map((event) => ({
+          id: event.id,
+          title: event.title,
+          eventDate: event.eventDate,
+          userId: event.userId,
+          userName: event.user?.name || '',
+        })) || [],
     }));
   }
 }

@@ -6,9 +6,12 @@ import {
   ManyToOne,
   OneToMany,
   JoinColumn,
+  ManyToMany,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { GroupMember } from './group-member.entity';
+import { Gift } from 'src/modules/gifts/entities/gift.entity';
+import { UserEvent } from 'src/modules/events/entities/user-event.entity';
 
 export enum GroupStatus {
   PENDING = 'PENDING',
@@ -30,11 +33,7 @@ export class Group {
   @Column({ type: 'enum', enum: GroupStatus, default: GroupStatus.PENDING })
   status: GroupStatus;
 
-  @Column({ name: 'event_date', type: 'timestamp' })
-  eventDate: Date;
-
-  // Relacionamento com Owner (Dono do grupo)
-  @Column({ name: 'owner_id' }) // Coluna física
+  @Column({ name: 'owner_id' })
   ownerId: string;
 
   @ManyToOne(() => User)
@@ -46,4 +45,10 @@ export class Group {
 
   @OneToMany(() => GroupMember, (member) => member.group)
   members: GroupMember[];
+
+  @ManyToMany(() => Gift, (gift) => gift.groups)
+  gifts: Gift[];
+
+  @ManyToMany(() => UserEvent, (event) => event.groups)
+  events: UserEvent[];
 }
