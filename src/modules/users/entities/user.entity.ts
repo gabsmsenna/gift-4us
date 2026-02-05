@@ -1,6 +1,13 @@
 import { Gift } from 'src/modules/gifts/entities/gift.entity';
 import { GroupMember } from 'src/modules/groups/entities/group-member.entity';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from 'typeorm';
 
 @Entity('users')
 export class User {

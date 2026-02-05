@@ -7,36 +7,34 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class UsersService {
+  constructor(
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+  ) {}
 
-    constructor(
-        @InjectRepository(User)
-        private userRepository: Repository<User>,
-    ) { }
+  async create(createUserDto: CreateUserDto) {
+    const userExists = await this.userRepository.findOne({
+      where: { email: createUserDto.email },
+    });
 
-    async create(createUserDto: CreateUserDto) {
-        const userExists = await this.userRepository.findOne({
-            where: { email: createUserDto.email },
-        });
-
-        if (userExists) {
-            throw new ConflictException('E-mail já em uso');
-        }
-
-        const hashedPassword = await bcrypt.hash(createUserDto.password, 0);
-
-        const user = this.userRepository.create({
-            ...createUserDto,
-            password: hashedPassword
-        });
-
-        const savedUser = await this.userRepository.save(user);
-
-        return {
-            id: savedUser.id,
-            email: savedUser.email,
-            name: savedUser.name,
-            birthday: savedUser.birthday,
-        };
-
+    if (userExists) {
+      throw new ConflictException('E-mail já em uso');
     }
+
+    const hashedPassword = await bcrypt.hash(createUserDto.password, 0);
+
+    const user = this.userRepository.create({
+      ...createUserDto,
+      password: hashedPassword,
+    });
+
+    const savedUser = await this.userRepository.save(user);
+
+    return {
+      id: savedUser.id,
+      email: savedUser.email,
+      name: savedUser.name,
+      birthday: savedUser.birthday,
+    };
+  }
 }

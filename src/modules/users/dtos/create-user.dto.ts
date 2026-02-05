@@ -1,4 +1,10 @@
-import { IsEmail, IsString, MinLength, IsDate, IsNotEmpty } from 'class-validator';
+import {
+  IsEmail,
+  IsString,
+  MinLength,
+  IsDate,
+  IsNotEmpty,
+} from 'class-validator';
 import { Transform } from 'class-transformer';
 import { parse } from 'date-fns';
 

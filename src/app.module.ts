@@ -12,7 +12,7 @@ import KeyvRedis from '@keyv/redis';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true, 
+      isGlobal: true,
     }),
 
     TypeOrmModule.forRootAsync({
@@ -26,7 +26,7 @@ import KeyvRedis from '@keyv/redis';
         password: configService.get<string>('DB_PASS'),
         database: configService.get<string>('DB_NAME'),
         autoLoadEntities: true,
-        synchronize: true,      
+        synchronize: true,
       }),
     }),
 
@@ -35,9 +35,7 @@ import KeyvRedis from '@keyv/redis';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async () => ({
-        stores: [
-          new KeyvRedis('redis://localhost:6379'),
-        ],
+        stores: [new KeyvRedis('redis://localhost:6379')],
         ttl: 2 * 60 * 60 * 1000,
       }),
     }),
@@ -51,7 +49,7 @@ import KeyvRedis from '@keyv/redis';
           transport: Transport.RMQ,
           options: {
             urls: [configService.getOrThrow<string>('RABBITMQ_URL')],
-            queue: 'events_queue', 
+            queue: 'events_queue',
             queueOptions: {
               durable: true,
             },
