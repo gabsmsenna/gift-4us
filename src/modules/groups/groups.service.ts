@@ -88,6 +88,7 @@ export class GroupsService {
           eventDate: event.eventDate,
           userId: event.userId,
           userName: event.user?.name || '',
+          eventType: event.eventType,
         })) || [],
     }));
   }

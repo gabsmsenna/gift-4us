@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserEvent } from './entities/user-event.entity';
+import { UserEvent, EventType } from './entities/user-event.entity';
 import { Group } from '../groups/entities/group.entity';
 import { User } from '../users/entities/user.entity';
 import { CreateEventDto } from './dtos/create-event.dto';
@@ -19,7 +19,7 @@ export class EventsService {
   ) {}
 
   async create(createEventDto: CreateEventDto) {
-    const { title, eventDate, userId, groupIds } = createEventDto;
+    const { title, eventDate, userId, groupIds, eventType } = createEventDto;
 
     const userExists = await this.userRepository.findOne({
       where: { id: userId },
@@ -48,6 +48,7 @@ export class EventsService {
       userId,
       user: userExists,
       groups,
+      eventType: eventType || EventType.REGULAR,
     });
 
     const savedEvent = await this.userEventRepository.save(userEvent);
@@ -58,6 +59,7 @@ export class EventsService {
       eventDate: savedEvent.eventDate,
       userId: savedEvent.userId,
       userName: userExists.name,
+      eventType: savedEvent.eventType,
       groups: savedEvent.groups.map((group) => ({
         id: group.id,
         name: group.name,
@@ -80,6 +82,7 @@ export class EventsService {
       eventDate: event.eventDate,
       userId: event.userId,
       userName: event.user?.name || '',
+      eventType: event.eventType,
       groups:
         event.groups?.map((group) => ({
           id: group.id,
@@ -100,6 +103,7 @@ export class EventsService {
     return events.map((event) => ({
       id: event.id,
       title: event.title,
+      eventType: event.eventType,
       eventDate: event.eventDate,
       userId: event.userId,
       userName: event.user?.name || 'Desconhecido',

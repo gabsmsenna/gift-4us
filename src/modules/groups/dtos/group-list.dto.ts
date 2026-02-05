@@ -7,6 +7,7 @@ import {
   IsOptional,
 } from 'class-validator';
 import { GroupStatus } from '../entities/group.entity';
+import { EventType } from '../../events/entities/user-event.entity';
 
 export class GroupMemberDto {
   @IsUUID()
@@ -38,6 +39,9 @@ export class UserEventDto {
   @IsOptional()
   @IsString()
   userName?: string;
+
+  @IsEnum(EventType)
+  eventType: EventType;
 }
 
 export class GroupListDto {

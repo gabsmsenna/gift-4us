@@ -11,6 +11,11 @@ import { User } from '../../users/entities/user.entity';
 import { Group } from 'src/modules/groups/entities/group.entity';
 import { Gift } from 'src/modules/gifts/entities/gift.entity';
 
+export enum EventType {
+  SECRET_FRIEND = 'SECRET_FRIEND',
+  REGULAR = 'REGULAR',
+}
+
 @Entity('user_events')
 export class UserEvent {
   @PrimaryGeneratedColumn('uuid')
@@ -28,6 +33,9 @@ export class UserEvent {
   @ManyToOne(() => User)
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @Column({ name: 'event_type', type: 'enum', enum: EventType, default: EventType.REGULAR })
+  eventType: EventType;
 
   @ManyToMany(() => Group, (group) => group.events)
   @JoinTable({ name: 'group_events' })

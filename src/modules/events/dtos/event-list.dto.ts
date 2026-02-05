@@ -4,8 +4,10 @@ import {
   IsUUID,
   IsArray,
   ValidateNested,
+  IsEnum,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { EventType } from '../entities/user-event.entity';
 
 export class GroupInfoDto {
   @IsUUID()
@@ -33,6 +35,9 @@ export class EventListDto {
 
   @IsString()
   userName: string;
+
+  @IsEnum(EventType)
+  eventType: EventType;
 
   @IsArray()
   @ValidateNested({ each: true })

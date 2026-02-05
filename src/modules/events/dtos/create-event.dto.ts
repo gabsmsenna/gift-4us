@@ -1,6 +1,7 @@
-import { IsString, IsDate, IsNotEmpty, IsUUID, IsArray } from 'class-validator';
+import { IsString, IsDate, IsNotEmpty, IsUUID, IsArray, IsEnum, IsOptional } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { isValid, parse } from 'date-fns';
+import { EventType } from '../entities/user-event.entity';
 
 export class CreateEventDto {
   @IsNotEmpty({ message: 'O nome do evento é obrigatório' })
@@ -31,4 +32,10 @@ export class CreateEventDto {
     message: 'Cada ID de grupo deve ser um UUID válido',
   })
   groupIds: string[];
+
+  @IsOptional()
+  @IsEnum(EventType, {
+    message: 'Tipo de evento inválido. Use SECRET_FRIEND ou REGULAR',
+  })
+  eventType?: EventType;
 }
