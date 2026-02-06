@@ -1,15 +1,17 @@
 import {
+  BadRequestException,
   Body,
   Controller,
-  Post,
   Get,
   HttpCode,
   HttpStatus,
+  Post,
   Query,
-  BadRequestException,
 } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dtos/create-event.dto';
+import { DrawSecretFriendDto } from './dtos/draw-secret-friend.dto';
+import { AddEventParticipantsDto } from './dtos/add-event-participants.dto';
 
 @Controller('events')
 export class EventsController {
@@ -20,6 +22,28 @@ export class EventsController {
   async create(@Body() createEventDto: CreateEventDto) {
     try {
       return await this.eventsService.create(createEventDto);
+    } catch (error) {
+      throw new BadRequestException((error as Error).message);
+    }
+  }
+
+  @Post('secret-friend-draw')
+  @HttpCode(HttpStatus.CREATED)
+  async drawSecretFriend(@Body() drawSecretFriendDto: DrawSecretFriendDto) {
+    try {
+      return await this.eventsService.drawSecretFriend(drawSecretFriendDto);
+    } catch (error) {
+      throw new BadRequestException((error as Error).message);
+    }
+  }
+
+  @Post('secret-friend-participants')
+  @HttpCode(HttpStatus.CREATED)
+  async addSecretFriendParticipants(
+    @Body() addEventParticipantsDto: AddEventParticipantsDto,
+  ) {
+    try {
+      return await this.eventsService.addEventParticipants(addEventParticipantsDto);
     } catch (error) {
       throw new BadRequestException((error as Error).message);
     }
