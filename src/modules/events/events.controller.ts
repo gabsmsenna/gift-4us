@@ -43,7 +43,9 @@ export class EventsController {
     @Body() addEventParticipantsDto: AddEventParticipantsDto,
   ) {
     try {
-      return await this.eventsService.addEventParticipants(addEventParticipantsDto);
+      return await this.eventsService.addEventParticipants(
+        addEventParticipantsDto,
+      );
     } catch (error) {
       throw new BadRequestException((error as Error).message);
     }

@@ -29,4 +29,3 @@ export class EventParticipant {
   @JoinColumn({ name: 'user_id' })
   user: User;
 }
-

@@ -38,7 +38,9 @@ export class GroupsController {
   }
 
   @Get(':id')
-  async getMembersGroup(@Param('id') id: string): Promise<GroupMemberDto[] | null> {
+  async getMembersGroup(
+    @Param('id') id: string,
+  ): Promise<GroupMemberDto[] | null> {
     return this.groupsService.getMembersGroup(id);
   }
 }

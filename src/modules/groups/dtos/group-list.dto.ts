@@ -7,7 +7,7 @@ import {
   IsOptional,
 } from 'class-validator';
 import { GroupStatus } from '../entities/group.entity';
-import { EventType } from '../../events/entities/user-event.entity';
+import { EventType } from 'src/util/event.enum';
 
 export class GroupMemberDto {
   @IsUUID()

@@ -9,4 +9,3 @@ export class DrawSecretFriendDto {
   @IsUUID('4', { message: 'ID do usuário deve ser um UUID válido' })
   userId: string;
 }
-

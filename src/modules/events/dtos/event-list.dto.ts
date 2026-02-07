@@ -7,7 +7,7 @@ import {
   IsEnum,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { EventType } from '../entities/user-event.entity';
+import { EventType } from 'src/util/event.enum';
 
 export class GroupInfoDto {
   @IsUUID()

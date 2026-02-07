@@ -1,7 +1,15 @@
-import { IsString, IsDate, IsNotEmpty, IsUUID, IsArray, IsEnum, IsOptional } from 'class-validator';
+import {
+  IsString,
+  IsDate,
+  IsNotEmpty,
+  IsUUID,
+  IsArray,
+  IsEnum,
+  IsOptional,
+} from 'class-validator';
 import { Transform } from 'class-transformer';
 import { isValid, parse } from 'date-fns';
-import { EventType } from '../entities/user-event.entity';
+import { EventType } from 'src/util/event.enum';
 
 export class CreateEventDto {
   @IsNotEmpty({ message: 'O nome do evento é obrigatório' })

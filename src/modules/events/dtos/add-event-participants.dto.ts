@@ -16,4 +16,3 @@ export class AddEventParticipantsDto {
   })
   participantIds: string[];
 }
-

@@ -1,10 +1,4 @@
-import {
-  IsArray,
-  IsNotEmpty,
-  IsString,
-  IsUUID,
-  IsUrl,
-} from 'class-validator';
+import { IsArray, IsNotEmpty, IsString, IsUUID, IsUrl } from 'class-validator';
 
 export class CreateGiftDto {
   @IsNotEmpty({ message: 'O título do presente é obrigatório' })
@@ -32,4 +26,3 @@ export class CreateGiftDto {
   })
   eventIds: string[];
 }
-

@@ -6,17 +6,15 @@ import {
   JoinColumn,
   ManyToMany,
   JoinTable,
+  OneToMany,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Group } from 'src/modules/groups/entities/group.entity';
 import { Gift } from 'src/modules/gifts/entities/gift.entity';
+import { EventSupply } from './event-supply.entity';
+import { EventType } from 'src/util/event.enum';
 
-export enum EventType {
-  SECRET_FRIEND = 'SECRET_FRIEND',
-  REGULAR = 'REGULAR',
-}
-
-@Entity('user_events')
+@Entity('events')
 export class UserEvent {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -34,7 +32,12 @@ export class UserEvent {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @Column({ name: 'event_type', type: 'enum', enum: EventType, default: EventType.REGULAR })
+  @Column({
+    name: 'event_type',
+    type: 'enum',
+    enum: EventType,
+    default: EventType.REGULAR,
+  })
   eventType: EventType;
 
   @ManyToMany(() => Group, (group) => group.events)
@@ -43,4 +46,7 @@ export class UserEvent {
 
   @ManyToMany(() => Gift, (gift) => gift.events)
   gifts: Gift[];
+
+  @OneToMany(() => EventSupply, (supply) => supply.event, { cascade: true })
+  supplies: EventSupply[];
 }

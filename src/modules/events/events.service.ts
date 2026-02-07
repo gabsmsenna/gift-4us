@@ -1,7 +1,13 @@
-import { Injectable, BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  ForbiddenException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
-import { UserEvent, EventType } from './entities/user-event.entity';
+import { UserEvent } from './entities/user-event.entity';
+import { EventType } from 'src/util/event.enum';
 import { Group } from '../groups/entities/group.entity';
 import { User } from '../users/entities/user.entity';
 import { CreateEventDto } from './dtos/create-event.dto';
@@ -12,7 +18,10 @@ import { DrawSecretFriendDto } from './dtos/draw-secret-friend.dto';
 import { EventParticipant } from './entities/event-participant.entity';
 import { AddEventParticipantsDto } from './dtos/add-event-participants.dto';
 import { DrawSecretFriendResponseDto } from './dtos/secret-friend-match.dto';
-import { MAX_SHUFFLE_ATTEMPTS, MIN_PARTICIPANTS } from 'src/constants/events.constants';
+import {
+  MAX_SHUFFLE_ATTEMPTS,
+  MIN_PARTICIPANTS,
+} from 'src/constants/events.constants';
 
 @Injectable()
 export class EventsService {
@@ -129,7 +138,6 @@ export class EventsService {
     }));
   }
 
-
   async addEventParticipants(addEventParticipantsDto: AddEventParticipantsDto) {
     const { eventId, ownerId, participantIds } = addEventParticipantsDto;
 
@@ -149,7 +157,9 @@ export class EventsService {
     }
 
     if (event.userId !== ownerId) {
-      throw new ForbiddenException('Apenas o dono do evento pode cadastrar participantes');
+      throw new ForbiddenException(
+        'Apenas o dono do evento pode cadastrar participantes',
+      );
     }
 
     if (!participantIds || participantIds.length === 0) {
@@ -179,9 +189,8 @@ export class EventsService {
       }),
     );
 
-    const savedParticipants = await this.eventParticipantRepository.save(
-      participantsToSave,
-    );
+    const savedParticipants =
+      await this.eventParticipantRepository.save(participantsToSave);
 
     return {
       eventId: event.id,
@@ -213,7 +222,6 @@ export class EventsService {
     return this.buildResponse(event, pairs);
   }
 
-
   private async findAndValidateEvent(eventId: string, userId: string) {
     const event = await this.userEventRepository.findOne({
       where: { id: eventId },
@@ -237,9 +245,9 @@ export class EventsService {
     }
 
     if (!event.groups?.[0]) {
-        throw new BadRequestException(
-          'Evento não possui grupo associado para vincular os pares.',
-        );
+      throw new BadRequestException(
+        'Evento não possui grupo associado para vincular os pares.',
+      );
     }
 
     return event;
@@ -248,15 +256,15 @@ export class EventsService {
   private async getValidParticipants(eventId: string) {
     const participants = await this.eventParticipantRepository.find({
       where: { eventId },
-      relations: ['user'], 
+      relations: ['user'],
     });
 
     const uniqueParticipantsMap = new Map();
     participants.forEach((p) => {
-        if (p.user) uniqueParticipantsMap.set(p.userId, p.user);
+      if (p.user) uniqueParticipantsMap.set(p.userId, p.user);
     });
 
-    return Array.from(uniqueParticipantsMap.values()); 
+    return Array.from(uniqueParticipantsMap.values());
   }
 
   private async validateDrawRules(participants: any[], eventId: string) {
@@ -286,22 +294,26 @@ export class EventsService {
     }
   }
 
-  private generateMatches(participants: any[]): { giver: any; receiver: any }[] {
+  private generateMatches(
+    participants: any[],
+  ): { giver: any; receiver: any }[] {
     const givers = [...participants];
     const receivers = [...participants];
-    
+
     let isValid = false;
     let attempts = 0;
 
     while (!isValid && attempts < MAX_SHUFFLE_ATTEMPTS) {
       attempts++;
-      
+
       for (let i = receivers.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [receivers[i], receivers[j]] = [receivers[j], receivers[i]];
       }
 
-      isValid = givers.every((giver, index) => giver.id !== receivers[index].id);
+      isValid = givers.every(
+        (giver, index) => giver.id !== receivers[index].id,
+      );
     }
 
     if (!isValid) {
@@ -316,21 +328,27 @@ export class EventsService {
     }));
   }
 
-  private async saveMatches(event: any, pairs: { giver: any; receiver: any }[]) {
+  private async saveMatches(
+    event: any,
+    pairs: { giver: any; receiver: any }[],
+  ) {
     const groupId = event.groups[0].id;
-    
-    const matchesToSave = pairs.map((pair) => 
+
+    const matchesToSave = pairs.map((pair) =>
       this.matchRepository.create({
         groupId: groupId,
         giverId: pair.giver.id,
         receiverId: pair.receiver.id,
-      })
+      }),
     );
 
     await this.matchRepository.save(matchesToSave);
   }
 
-  private buildResponse(event: any, pairs: { giver: User; receiver: User }[]): DrawSecretFriendResponseDto {
+  private buildResponse(
+    event: any,
+    pairs: { giver: User; receiver: User }[],
+  ): DrawSecretFriendResponseDto {
     return {
       eventId: event.id,
       eventTitle: event.title,
