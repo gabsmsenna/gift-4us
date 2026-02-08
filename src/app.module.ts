@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CacheModule } from '@nestjs/cache-manager';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { UsersModule } from './modules/users/users.module';
+import { AuthModule } from './modules/auth/auth.module';
 import { GroupsModule } from './modules/groups/groups.module';
 import { GiftsModule } from './modules/gifts/gifts.module';
 import { InvitesModule } from './modules/invites/invites.module';
@@ -59,6 +60,8 @@ import KeyvRedis from '@keyv/redis';
     ]),
 
     UsersModule,
+
+    AuthModule,
 
     GroupsModule,
 
