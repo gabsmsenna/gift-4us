@@ -18,8 +18,7 @@ export class GroupsService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async create(createGroupDto: CreateGroupDto) {
-    const { ownerId, ...groupData } = createGroupDto;
+  async create(createGroupDto: CreateGroupDto, ownerId: string) {
 
     const ownerExists = await this.userRepository.findOne({
       where: { id: ownerId },
@@ -30,7 +29,7 @@ export class GroupsService {
     }
 
     const group = this.groupRepository.create({
-      ...groupData,
+      ...createGroupDto,
       ownerId,
       owner: ownerExists,
     });
@@ -93,23 +92,23 @@ export class GroupsService {
     }));
   }
 
-  async getMembersGroup(groupId: string) {
-    const group = await this.groupRepository
-      .createQueryBuilder('group')
-      .leftJoinAndSelect('group.members', 'members')
-      .leftJoinAndSelect('members.user', 'user')
-      .where('group.id = :groupId', { groupId })
-      .getOne();
+async getMembersGroup(groupId: string) {
+  const members = await this.groupMemberRepository.find({
+    where: { group: { id: groupId } }, 
+    relations: { user: true },         
+    select: {                         
+      joinedAt: true,
+      user: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    },
+  });
 
-    if (!group) {
-      return null;
-    }
-
-    return group.members.map((member) => ({
-      id: member.user.id,
-      name: member.user.name,
-      email: member.user.email,
-      joinedAt: member.joinedAt,
-    }));
-  }
+  return members.map(({ user, joinedAt }) => ({
+    ...user,
+    joinedAt,
+  }));
+}
 }

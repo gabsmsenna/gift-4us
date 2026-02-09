@@ -15,10 +15,6 @@ export class CreateGiftDto {
   )
   urls: string[];
 
-  @IsNotEmpty({ message: 'O ID do usuário é obrigatório' })
-  @IsUUID('4', { message: 'ID do usuário deve ser um UUID válido' })
-  userId: string;
-
   @IsArray({ message: 'Os IDs dos eventos devem ser um array' })
   @IsUUID('4', {
     each: true,

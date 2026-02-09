@@ -8,19 +8,24 @@ import {
   Param,
   Post,
   Query,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { GiftsService } from './gifts.service';
 import { CreateGiftDto } from './dtos/create-gift.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('gifts')
+@UseGuards(JwtAuthGuard)
 export class GiftsController {
   constructor(private readonly giftsService: GiftsService) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() createGiftDto: CreateGiftDto) {
+  async create(@Body() createGiftDto: CreateGiftDto, @Req() req,) {
     try {
-      return await this.giftsService.create(createGiftDto);
+      const userId = req.user?.id;
+      return await this.giftsService.create(createGiftDto, userId);
     } catch (error) {
       throw new BadRequestException((error as Error).message);
     }

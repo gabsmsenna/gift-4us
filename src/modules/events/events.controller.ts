@@ -7,21 +7,27 @@ import {
   HttpStatus,
   Post,
   Query,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dtos/create-event.dto';
 import { DrawSecretFriendDto } from './dtos/draw-secret-friend.dto';
 import { AddEventParticipantsDto } from './dtos/add-event-participants.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('events')
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() createEventDto: CreateEventDto) {
+  async create(@Body() createEventDto: CreateEventDto, @Req() req) {
     try {
-      return await this.eventsService.create(createEventDto);
+      const userId = req.user?.id;
+
+      return await this.eventsService.create(createEventDto, userId);
     } catch (error) {
       throw new BadRequestException((error as Error).message);
     }
@@ -29,9 +35,17 @@ export class EventsController {
 
   @Post('secret-friend-draw')
   @HttpCode(HttpStatus.CREATED)
-  async drawSecretFriend(@Body() drawSecretFriendDto: DrawSecretFriendDto) {
+  async drawSecretFriend(
+    @Body() drawSecretFriendDto: DrawSecretFriendDto,
+    @Req() req,
+  ) {
     try {
-      return await this.eventsService.drawSecretFriend(drawSecretFriendDto);
+      const userId = req.user?.id;
+
+      return await this.eventsService.drawSecretFriend(
+        drawSecretFriendDto,
+        userId,
+      );
     } catch (error) {
       throw new BadRequestException((error as Error).message);
     }
@@ -41,21 +55,27 @@ export class EventsController {
   @HttpCode(HttpStatus.CREATED)
   async addSecretFriendParticipants(
     @Body() addEventParticipantsDto: AddEventParticipantsDto,
+    @Req() req,
   ) {
     try {
-      return await this.eventsService.addEventParticipants(
-        addEventParticipantsDto,
-      );
+      const ownerId = req.user?.id;
+
+      return await this.eventsService.addEventParticipants({
+        ...addEventParticipantsDto,
+      }, ownerId);
     } catch (error) {
       throw new BadRequestException((error as Error).message);
     }
   }
 
   @Get('user-events')
-  async findUserEvents(@Query('userId') userId: string) {
+  async findUserEvents(@Req() req) {
+    const userId = req.user?.id;
+
     if (!userId) {
-      throw new BadRequestException('O parâmetro userId é obrigatório');
+      throw new BadRequestException('Usuário não encontrado na requisição autenticada');
     }
+
     return this.eventsService.findUserEvents(userId);
   }
 

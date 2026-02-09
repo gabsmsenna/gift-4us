@@ -9,12 +9,17 @@ import {
   HttpCode,
   HttpStatus,
   Query,
+  UseGuards,
+  Req,
+  Request,
 } from '@nestjs/common';
 import { EventSuppliesService } from '../services/event-supplies.service';
 import { CreateEventSupplyDto } from '../dtos/create-event-supply.dto';
 import { UpdateEventSupplyDto } from '../dtos/update-event-supply.dto';
+import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
 
 @Controller('events')
+@UseGuards(JwtAuthGuard)
 export class EventSuppliesController {
   constructor(private readonly eventSuppliesService: EventSuppliesService) {}
 
@@ -22,9 +27,10 @@ export class EventSuppliesController {
   @HttpCode(HttpStatus.CREATED)
   async createSupply(
     @Param('eventId') eventId: string,
-    @Query('userId') userId: string,
     @Body() createEventSupplyDto: CreateEventSupplyDto,
-  ) {
+    @Request() req
+   ) {
+    const userId = req.user.id;
     return await this.eventSuppliesService.createSupply(
       eventId,
       userId,
@@ -42,9 +48,10 @@ export class EventSuppliesController {
   @HttpCode(HttpStatus.OK)
   async updateSupply(
     @Param('supplyId') supplyId: string,
-    @Query('userId') userId: string,
+    @Request() req,
     @Body() updateEventSupplyDto: UpdateEventSupplyDto,
   ) {
+    const userId = req.user.id;
     return await this.eventSuppliesService.updateSupply(
       supplyId,
       userId,
@@ -56,8 +63,9 @@ export class EventSuppliesController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteSupply(
     @Param('supplyId') supplyId: string,
-    @Query('userId') userId: string,
+    @Request() req,
   ) {
+    const userId = req.user.id;
     await this.eventSuppliesService.deleteSupply(supplyId, userId);
   }
 }

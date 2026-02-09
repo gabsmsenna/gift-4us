@@ -23,7 +23,4 @@ export class CreateGroupDto {
   })
   status?: GroupStatus;
 
-  @IsNotEmpty({ message: 'O ID do dono do grupo é obrigatório' })
-  @IsUUID('4', { message: 'ID do dono deve ser um UUID válido' })
-  ownerId: string;
 }

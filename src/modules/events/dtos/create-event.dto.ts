@@ -30,9 +30,8 @@ export class CreateEventDto {
   @IsDate({ message: 'Data do evento inválida' })
   eventDate: Date;
 
-  @IsNotEmpty({ message: 'O ID do usuário é obrigatório' })
-  @IsUUID('4', { message: 'ID do usuário deve ser um UUID válido' })
-  userId: string;
+  // `userId` agora é obtido do token JWT (usuário autenticado)
+  // e não deve mais ser enviado no corpo da requisição.
 
   @IsArray({ message: 'Os IDs dos grupos devem ser um array' })
   @IsUUID('4', {

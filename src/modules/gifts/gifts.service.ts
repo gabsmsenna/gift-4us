@@ -28,8 +28,8 @@ export class GiftsService {
     private readonly matchRepository: Repository<Match>,
   ) {}
 
-  async create(createGiftDto: CreateGiftDto) {
-    const { title, urls, userId, eventIds } = createGiftDto;
+  async create(createGiftDto: CreateGiftDto, userId: string) {
+    const { title, urls, eventIds } = createGiftDto;
 
     const user = await this.userRepository.findOne({
       where: { id: userId },

@@ -40,8 +40,8 @@ export class EventsService {
     private readonly eventParticipantRepository: Repository<EventParticipant>,
   ) {}
 
-  async create(createEventDto: CreateEventDto) {
-    const { title, eventDate, userId, groupIds, eventType } = createEventDto;
+  async create(createEventDto: CreateEventDto, userId: string) {
+    const { title, eventDate, groupIds, eventType } = createEventDto;
 
     const userExists = await this.userRepository.findOne({
       where: { id: userId },
@@ -138,13 +138,15 @@ export class EventsService {
     }));
   }
 
-  async addEventParticipants(addEventParticipantsDto: AddEventParticipantsDto) {
-    const { eventId, ownerId, participantIds } = addEventParticipantsDto;
+  async addEventParticipants(addEventParticipantsDto: AddEventParticipantsDto, ownerId: string) {
+    const { eventId, participantIds } = addEventParticipantsDto;
 
     const event = await this.userEventRepository.findOne({
       where: { id: eventId },
       relations: ['user'],
     });
+
+    console.log("EVENTO", event);
 
     if (!event) {
       throw new BadRequestException('Evento não encontrado');
@@ -194,11 +196,8 @@ export class EventsService {
 
     return {
       eventId: event.id,
-      eventTitle: event.title,
-      ownerId: event.userId,
       participants: savedParticipants.map((p) => ({
         id: p.id,
-        userName: p.user.name,
         userId: p.userId,
       })),
     };
@@ -206,8 +205,9 @@ export class EventsService {
 
   async drawSecretFriend(
     drawSecretFriendDto: DrawSecretFriendDto,
+    userId: string,
   ): Promise<DrawSecretFriendResponseDto> {
-    const { eventId, userId } = drawSecretFriendDto;
+    const { eventId } = drawSecretFriendDto;
 
     const event = await this.findAndValidateEvent(eventId, userId);
 
