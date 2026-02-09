@@ -17,20 +17,20 @@ import { EventSuppliesService } from '../services/event-supplies.service';
 import { CreateEventSupplyDto } from '../dtos/create-event-supply.dto';
 import { UpdateEventSupplyDto } from '../dtos/update-event-supply.dto';
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 
 @Controller('events')
 @UseGuards(JwtAuthGuard)
 export class EventSuppliesController {
-  constructor(private readonly eventSuppliesService: EventSuppliesService) {}
+  constructor(private readonly eventSuppliesService: EventSuppliesService) { }
 
   @Post(':eventId/supplies')
   @HttpCode(HttpStatus.CREATED)
   async createSupply(
     @Param('eventId') eventId: string,
     @Body() createEventSupplyDto: CreateEventSupplyDto,
-    @Request() req
-   ) {
-    const userId = req.user.id;
+    @CurrentUser('sub') userId: string,
+  ) {
     return await this.eventSuppliesService.createSupply(
       eventId,
       userId,
@@ -48,10 +48,9 @@ export class EventSuppliesController {
   @HttpCode(HttpStatus.OK)
   async updateSupply(
     @Param('supplyId') supplyId: string,
-    @Request() req,
+    @CurrentUser('sub') userId: string,
     @Body() updateEventSupplyDto: UpdateEventSupplyDto,
   ) {
-    const userId = req.user.id;
     return await this.eventSuppliesService.updateSupply(
       supplyId,
       userId,
@@ -63,9 +62,8 @@ export class EventSuppliesController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteSupply(
     @Param('supplyId') supplyId: string,
-    @Request() req,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = req.user.id;
     await this.eventSuppliesService.deleteSupply(supplyId, userId);
   }
 }

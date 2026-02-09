@@ -8,21 +8,21 @@ import {
   Param,
   HttpCode,
   HttpStatus,
-  Query,
 } from '@nestjs/common';
 import { EventSuppliesService } from '../services/event-supplies.service';
 import { CreateSupplyContributionDto } from '../dtos/create-supply-contribution.dto';
 import { UpdateSupplyContributionDto } from '../dtos/update-supply-contribution.dto';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 
 @Controller()
 export class SupplyContributionsController {
-  constructor(private readonly eventSuppliesService: EventSuppliesService) {}
+  constructor(private readonly eventSuppliesService: EventSuppliesService) { }
 
   @Post('supplies/:supplyId/contributions')
   @HttpCode(HttpStatus.CREATED)
   async createContribution(
     @Param('supplyId') supplyId: string,
-    @Query('userId') userId: string,
+    @CurrentUser('sub') userId: string,
     @Body() createSupplyContributionDto: CreateSupplyContributionDto,
   ) {
     return await this.eventSuppliesService.createContribution(
@@ -42,7 +42,7 @@ export class SupplyContributionsController {
   @HttpCode(HttpStatus.OK)
   async updateContribution(
     @Param('contributionId') contributionId: string,
-    @Query('userId') userId: string,
+    @CurrentUser('sub') userId: string,
     @Body() updateSupplyContributionDto: UpdateSupplyContributionDto,
   ) {
     return await this.eventSuppliesService.updateContribution(
@@ -56,7 +56,7 @@ export class SupplyContributionsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteContribution(
     @Param('contributionId') contributionId: string,
-    @Query('userId') userId: string,
+    @CurrentUser('sub') userId: string,
   ) {
     await this.eventSuppliesService.deleteContribution(contributionId, userId);
   }
