@@ -34,8 +34,9 @@ export class GiftsController {
   @Get('by-event/:eventId')
   async findByEvent(
     @Param('eventId') eventId: string,
-    @Query('userId') userId: string,
+    @Req() req,
   ) {
+    const userId = req.user?.id;
     if (!userId) {
       throw new BadRequestException('O parâmetro userId é obrigatório');
     }
